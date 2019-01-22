@@ -130,28 +130,6 @@ def printer_stats(address):
     'yellowdrumst': yellowdrumst, 'cyandrumst': cyandrumst, 'magdrumst': magdrumst, 'blackdrumst': blackdrumst,
     'wastest':wasteboxst, 'tray1':tray_response,'tray2':tray2_response, 'tray_status':tray1, 'tray2_status':tray2}
 
-"""
-page = requests.get('http://10.230.38.22/status/events.htm')
-
-#Store the contents of the website under doc
-doc = lh.fromstring(page.content)
-
-#Parse data that are stored between <tr>..</tr> of HTML
-tr_elements = doc.xpath('//tr')
-
-#print([len(T) for T in tr_elements[:12]])
-
-#Create empty list
-col=[]
-i=0
-#For each row, store each first element (header) and an empty list
-for t in tr_elements[0]:
-    i+=1
-    name=t.text_content()
-    #print('%d:"%s"'%(i,name))
-    col.append((name))
-print(col)
-"""
 #Black and White Printer
 def blackandwhite(bw):
     #Create a handle, page, to handle the contents of the website
@@ -206,3 +184,26 @@ def blackandwhite(bw):
         icetray2 = 'Paper is low. Add some paper please.'
     tray_status = '{0}\n {1}'.format(icetray1, icetray2)
     return {'bl':black, 'ts':tray_status}
+
+"""
+page = requests.get('http://10.230.38.22/status/events.htm')
+
+#Store the contents of the website under doc
+doc = lh.fromstring(page.content)
+
+#Parse data that are stored between <tr>..</tr> of HTML
+tr_elements = doc.xpath('//tr')
+
+#print([len(T) for T in tr_elements[:12]])
+
+#Create empty list
+col=[]
+i=0
+#For each row, store each first element (header) and an empty list
+for t in tr_elements[0]:
+    i+=1
+    name=t.text_content()
+    #print('%d:"%s"'%(i,name))
+    col.append((name))
+print(col)
+"""
