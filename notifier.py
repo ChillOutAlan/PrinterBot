@@ -3,6 +3,8 @@ import scrapemodnot
 import mysql.connector as mariadb
 import unicodedata
 from datetime import datetime
+from fuzzywuzzy import fuzz
+from fuzzywuzzy import process
 color = "xxx"
 bw = 'xxx'
 
@@ -96,7 +98,7 @@ def drum_notification():
                 mariadb_connection.commit()
                 print("Updated Time in Database!")
     return None
-    
+
 # Tray Status for Color PRINTER
 #'tray1':tray_response,'tray2':tray2_response, 'tray_status':tray1, 'tray2_status':tray2}
 def paper_notfication():
