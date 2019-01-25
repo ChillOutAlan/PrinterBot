@@ -3,7 +3,6 @@ import scrapemodnot
 import mysql.connector as mariadb
 import unicodedata
 from datetime import datetime
-# Ratio higher than 97 will work
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 
@@ -31,7 +30,7 @@ def catridge_notification():
         cursor.execute(query_statement)
         data = cursor.fetchone()
         data = ''.join(data)
-        cartridge_ratio = fuzz.ratio(data, cartridge_list[a]) # Case Sensitive 50% match unless partial ratio
+        cartridge_ratio = fuzz.ratio(data, cartridge_list[a]) # Ratio higher than 90% is safe to push message and update database
         if ratio cartridge_ratio < 90: #do not push message
             slack_message("{0}".format(cartridge_stats[a]), "bot-tester")
             update_state = "UPDATE COLORPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
