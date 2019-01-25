@@ -7,11 +7,15 @@ from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 import os
 
-#Add configuration File
-color = "xxx"
-bw = 'xxx'
+with open("C:/Users/turto/Documents/PrinterBot/config.txt", "r") as f: # change the directory based on where the file exist
+    content = f.readlines()
+content = [x.strip() for x in content]
 
-mariadb_connection = mariadb.connect(user='x', password='xxx', database='xxx') # config file or Export Token Value
+#Add configuration File
+color = content[0]
+bw = content[1]
+
+mariadb_connection = mariadb.connect(user=content[2], password=content[3], database=content[4]) # config file or Export Token Value
 cursor = mariadb_connection.cursor()
 
 def slack_message(message, channel):
