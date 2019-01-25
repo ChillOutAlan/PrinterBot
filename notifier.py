@@ -7,8 +7,6 @@ from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 import os
 
-config = open("config.txt", "r")
-
 #Add configuration File
 color = "xxx"
 bw = 'xxx'
