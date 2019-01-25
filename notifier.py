@@ -5,16 +5,19 @@ import unicodedata
 from datetime import datetime
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
+import os
+
+config = open("config.txt", "r")
 
 #Add configuration File
 color = "xxx"
 bw = 'xxx'
 
-mariadb_connection = mariadb.connect(user='x', password='xxx', database='xxx') # config file
+mariadb_connection = mariadb.connect(user='x', password='xxx', database='xxx') # config file or Export Token Value
 cursor = mariadb_connection.cursor()
 
 def slack_message(message, channel):
-    sc = SlackClient(os.environ.get('SLACK_BOT_TOKEN')) #Token Exported into the OS
+    sc = SlackClient(os.environ.get('SLACK_BOT_TOKEN')) #Token Exported into the OS or Environment
     sc.api_call('chat.postMessage', channel=channel, text=message, username='Notifier Bot')
 
 # Notify on Replacing the Ink Cartridge for the Color Printer
@@ -150,3 +153,4 @@ if __name__ == '__main__':
     drum_notification()
     paper_notfication()
     mariadb_connection.close()
+    file.close()
