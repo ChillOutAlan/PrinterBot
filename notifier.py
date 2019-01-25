@@ -14,8 +14,7 @@ mariadb_connection = mariadb.connect(user='x', password='xxx', database='xxx') #
 cursor = mariadb_connection.cursor()
 
 def slack_message(message, channel):
-    access_token = "xxx" #Also Export Token
-    sc = SlackClient(access_token)
+    sc = SlackClient(os.environ.get('SLACK_BOT_TOKEN')) #Token Exported into the OS
     sc.api_call('chat.postMessage', channel=channel, text=message, username='Notifier Bot')
 
 # Notify on Replacing the Ink Cartridge for the Color Printer
