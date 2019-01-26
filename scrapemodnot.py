@@ -106,8 +106,7 @@ def printer_stats(address):
 
     #Paper Level (If string contains ok return paper level is good and if string contains low paper return fill paper)
     tray1 = str2[tray1pos:tray2pos] #
-    tray2 = str2[tray2pos:616]
-
+    tray2 = str2[tray2pos:680]
     if "Low" in tray1:
         tray_response = "Low"
     elif "Add" in tray1:
@@ -120,12 +119,7 @@ def printer_stats(address):
         tray2_response = "Low"
     elif "OK" in tray2:
         tray2_response = "OK"
-
-    #'tr':tray_response, 'tr2':tray2_response
-    #tray_status = '{0}\n {1}'.format(tray_response, tray2_response)
-    #return {'cl':cartridge_list, 'dl':drum_list, , 'ts': tray_status}
-    return {'yellow': yellow, 'cyan': cyan, 'magenta': magenta, 'black': black,
-    'yellowdrum': yellowdrum, 'cyandrum': cyandrum, 'magdrum': magentadrum, 'blackdrum': blackdrum,
+    return {'yellow': yellow, 'cyan': cyan, 'magenta': magenta, 'black': black, 'yellowdrum': yellowdrum, 'cyandrum': cyandrum, 'magdrum': magentadrum, 'blackdrum': blackdrum,
     'waste':wastebox, 'yellowst': yellowst, 'cyanst': cyan, 'magentast': magentast, 'blackst': blackst,
     'yellowdrumst': yellowdrumst, 'cyandrumst': cyandrumst, 'magdrumst': magdrumst, 'blackdrumst': blackdrumst,
     'wastest':wasteboxst, 'tray1':tray_response,'tray2':tray2_response, 'tray_status':tray1, 'tray2_status':tray2}

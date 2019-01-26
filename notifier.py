@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 from slackclient import SlackClient
 import scrapemodnot
 import mysql.connector as mariadb
@@ -7,7 +8,7 @@ from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 import os
 
-with open("C:/Users/turto/Documents/PrinterBot/config.txt", "r") as f: # change the directory based on where the file exist
+with open("/home/ubuntu/Documents/PrinterBot/config.txt", "r") as f: # change the directory based on where the file exist
     content = f.readlines()
 content = [x.strip() for x in content]
 
@@ -35,7 +36,7 @@ def catridge_notification():
         data = cursor.fetchone()
         data = ''.join(data)
         cartridge_ratio = fuzz.ratio(data, cartridge_list[a]) # Ratio higher than 90% is safe to push message and update database
-        if ratio cartridge_ratio < 90: #do not push message
+        if cartridge_ratio < 90: #do not push message
             slack_message("{0}".format(cartridge_stats[a]), "bot-tester")
             update_state = "UPDATE COLORPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
             cursor.execute(update_state)
@@ -78,7 +79,7 @@ def drum_notification():
         data = cursor.fetchone()
         data = ''.join(data)
         cartridge_ratio = fuzz.ratio(data, cartridge_list[a]) # Case Sensitive 50% match unless partial ratio
-        if ratio cartridge_ratio < 90:
+        if cartridge_ratio < 90:
             slack_message("{0}".format(cartridge_stats[a]), "bot-tester")
             update_state = "UPDATE COLORPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
             cursor.execute(update_state)
@@ -108,7 +109,6 @@ def drum_notification():
     return None
 
 # Tray Status for Color PRINTER
-#'tray1':tray_response,'tray2':tray2_response, 'tray_status':tray1, 'tray2_status':tray2}
 def paper_notfication():
     cartridge_list = [scrapemodnot.printer_stats(color)['tray_response'],scrapemodnot.printer_stats(color)['tray2_response']]
     cartridge_names = ["`TRAY STATUS 1`", "`TRAY STATUS 2`"]
@@ -121,7 +121,7 @@ def paper_notfication():
         data = cursor.fetchone()
         data = ''.join(data)
         cartridge_ratio = fuzz.ratio(data, cartridge_list[a]) # Case Sensitive 50% match unless partial ratio
-        if ratio cartridge_ratio < 90:
+        if cartridge_ratio < 90:
             slack_message("{0}".format(cartridge_stats[a]), "bot-tester")
             update_state = "UPDATE COLORPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
             cursor.execute(update_state)
@@ -152,7 +152,7 @@ def paper_notfication():
 
 if __name__ == '__main__':
     catridge_notification()
-    drum_notification()
-    paper_notfication()
+    #drum_notification()
+    #paper_notfication()
     mariadb_connection.close()
     file.close()
