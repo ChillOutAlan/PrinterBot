@@ -152,7 +152,7 @@ def paper_notfication():
 
 if __name__ == '__main__':
     catridge_notification()
-    #drum_notification()
+    drum_notification()
     #paper_notfication()
     mariadb_connection.close()
-    file.close()
+    file.close(f)
