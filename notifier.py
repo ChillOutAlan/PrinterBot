@@ -150,6 +150,7 @@ def paper_notfication():
                 print("Updated Time in Database!")
     return None
 
+
 if __name__ == '__main__':
     catridge_notification()
     drum_notification()
