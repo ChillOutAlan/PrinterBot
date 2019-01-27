@@ -68,9 +68,9 @@ def catridge_notification():
 # Give status on Drum if there are issues
 #drum_stats = [scrapemodnot.printer_stats(color)['yellowdrumst'],scrapemodnot.printer_stats(color)['cyandrumst'],scrapemodnot.printer_stats(color)['blackdrumst'], scrapemodnot.printer_stats(color)['magdrumst']]
 def drum_notification():
-    cartridge_list = [scrapemodnot.printer_stats(color)['yellowdrum'],scrapemodnot.printer_stats(color)['cyandrum'],scrapemodnot.printer_stats(color)['blackdrum'], scrapemodnot.printer_stats(color)['magdrum'], scrapemodnot.printer_stats(color)['wastebox']]
+    cartridge_list = [scrapemodnot.printer_stats(color)['yellowdrum'],scrapemodnot.printer_stats(color)['cyandrum'],scrapemodnot.printer_stats(color)['blackdrum'], scrapemodnot.printer_stats(color)['magdrum'], scrapemodnot.printer_stats(color)['waste']]
     cartridge_names = ["`yellow drum status`", "`cyan drum status`", "`black drum status`", "`magenta drum status`", "`wastebox status`"]
-    cartridge_stats = [scrapemodnot.printer_stats(color)['yellowdrumst'],scrapemodnot.printer_stats(color)['cyandrumst'],scrapemodnot.printer_stats(color)['blackdrumst'], scrapemodnot.printer_stats(color)['magdrumst'], scrapemodnot.printer_stats(color)['wastebox']]
+    cartridge_stats = [scrapemodnot.printer_stats(color)['yellowdrumst'],scrapemodnot.printer_stats(color)['cyandrumst'],scrapemodnot.printer_stats(color)['blackdrumst'], scrapemodnot.printer_stats(color)['magdrumst'], scrapemodnot.printer_stats(color)['waste']]
     #COLOR PRINTER Catridge Notifier
     # If Cartridge != DB Row don't push
     for a in range(len(cartridge_list)):
@@ -110,7 +110,7 @@ def drum_notification():
 
 # Tray Status for Color PRINTER
 def paper_notfication():
-    cartridge_list = [scrapemodnot.printer_stats(color)['tray_response'],scrapemodnot.printer_stats(color)['tray2_response']]
+    cartridge_list = [scrapemodnot.printer_stats(color)['tray1'],scrapemodnot.printer_stats(color)['tray2']]
     cartridge_names = ["`TRAY STATUS 1`", "`TRAY STATUS 2`"]
     cartridge_stats = [scrapemodnot.printer_stats(color)['tray_status'],scrapemodnot.printer_stats(color)['tray2_status']]
     #COLOR PRINTER Catridge Notifier
@@ -153,6 +153,6 @@ def paper_notfication():
 if __name__ == '__main__':
     catridge_notification()
     drum_notification()
-    #paper_notfication()
+    paper_notfication()
     mariadb_connection.close()
     file.close(f)
