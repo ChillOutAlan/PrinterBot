@@ -7,6 +7,7 @@ from datetime import datetime
 from fuzzywuzzy import fuzz
 from fuzzywuzzy import process
 import os
+import re
 
 with open("/home/ubuntu/Documents/PrinterBot/config.txt", "r") as f: # change the directory based on where the file exist
     content = f.readlines()
@@ -152,9 +153,71 @@ def paper_notfication():
                 print("Updated Time in Database!")
     return None
 
+# Tray Status and ink status for black and white printer
+def bw_notfication(): #threshold is 0% for ink and missing for paper
+    cartridge_list = [scrapemodnot.blackandwhite(bw)['i1'],scrapemodnot.blackandwhite(bw)['i2']]
+    cartridge_names = ["`TRAY STATUS 1`", "`TRAY STATUS 2`"]
+    #COLOR PRINTER Catridge Notifier
+    # If Cartridge != DB Row don't push
+    bwlevel = scrapemodnot.blackandwhite(bw)['black']
+    percentage_ink = int(re.search(r'\d+', bwlevel.group()))
+    query1_statement = "select `DATE TIME` from BWPRINTER LIMIT 1;"
+    cursor.execute(query1_statement)
+    newtime = cursor.fetchone()
+    olddata = "".join(str(v) for v in newtime)
+    date_old = datetime.strptime(olddata,"%Y-%m-%d %H:%M:%S")
+    date_new = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    date_new = datetime.strptime(date_new, "%Y-%m-%d %H:%M:%S")
+    time = date_new - date_old
+    if percentage_ink < 0 and time.total_seconds() > 18000:
+        slack_message("Replace the Cartridge", "bot-tester")
+        update_state = "UPDATE COLORPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
+        cursor.execute(update_state)
+        # Time update
+        dt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        time_statement = "UPDATE BWPRINTER SET `DATE TIME` = '{0}'".format(dt)
+        cursor.execute(time_statement)
+        mariadb_connection.commit()
+    for a in range(len(cartridge_list)):
+        query_statement = "select {} from BWPRINTER LIMIT 1;".format(cartridge_names[a])
+        cursor.execute(query_statement)
+        data = cursor.fetchone()
+        data = ''.join(data)
+        cartridge_ratio = fuzz.partial_ratio(data, cartridge_list[a]) # Case Sensitive 50% match unless partial ratio
+        if cartridge_ratio == 100 and cartridge_stats != 'OK':
+            slack_message("{0}".format('Add Paper to Tray {0}'.format(a+1)), "bot-tester")
+            update_state = "UPDATE BWPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
+            cursor.execute(update_state)
+            # Time update
+            dt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            time_statement = "UPDATE BWPRINTER SET `DATE TIME` = '{0}'".format(dt)
+            cursor.execute(time_statement)
+            mariadb_connection.commit()
+            print("Pushed Message and Updated Database (Paper Status)")
+        else:
+            #Push Notification if x > 1 hour and no changes
+            query1_statement = "select `DATE TIME TRAY` from BWPRINTER LIMIT 1;"
+            cursor.execute(query1_statement)
+            newtime = cursor.fetchone()
+            olddata = "".join(str(v) for v in newtime)
+            date_old = datetime.strptime(olddata,"%Y-%m-%d %H:%M:%S")
+            date_new = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            date_new = datetime.strptime(date_new, "%Y-%m-%d %H:%M:%S")
+            time = date_new - date_old
+            new_ratio = fuzz.partial_ratio(cartridge_list[a], "Missing")
+            if time.total_seconds() > 18000 and new_ratio == 100: # 18000 seconds = 5 hours
+                slack_message("{0}".format('Please add Paper to Tray {0}'.format(a+1), "bot-tester"))
+                dt1 = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                time_statement1 = "UPDATE BWPRINTER SET `DATE TIME TRAY` = '{0}'".format(dt1)
+                cursor.execute(time_statement1)
+                mariadb_connection.commit()
+                print("Updated Time in Database!")
+    return None
+
 if __name__ == '__main__':
     catridge_notification()
     drum_notification()
     paper_notfication()
+    bw_notfication()
     mariadb_connection.close()
     file.close(f)
