@@ -169,9 +169,11 @@ def bw_notfication(): #threshold is 0% for ink and missing for paper
     date_new = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     date_new = datetime.strptime(date_new, "%Y-%m-%d %H:%M:%S")
     time = date_new - date_old
+    query_update = "UPDATE BWPRINTER SET `INK LEVEL` = {}".format(percentage_ink)
+    cursor.execute(query_update)
     if percentage_ink < 0 and time.total_seconds() > 18000:
         slack_message("Replace the Cartridge", "bot-tester")
-        update_state = "UPDATE COLORPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
+        update_state = "UPDATE BWPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
         cursor.execute(update_state)
         # Time update
         dt = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
