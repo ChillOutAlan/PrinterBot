@@ -169,4 +169,4 @@ def blackandwhite(bw):
         icetray2 = 'Missing'
     elif 'Low Paper' in tray2:
         icetray2 = 'Low'
-    return {'bl':black, 'i1':icetray1, 'i2':icetray2}
+    return {'black':black, 'i1':icetray1, 'i2':icetray2}
