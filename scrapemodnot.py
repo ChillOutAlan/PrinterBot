@@ -149,7 +149,6 @@ def blackandwhite(bw):
     blackpos = str2.find('Black Cartridge')
     perpos = str2.find('%')
     black = str2[blackpos: perpos+1]
-    #print(black)
 
     #Paper Levels
     tray1pos = str2.find('Tray 1')
@@ -159,16 +158,15 @@ def blackandwhite(bw):
 
     #print(tray2)
     if 'OK' in tray1:
-        icetray1 = 'Paper Levels are OK!'
+        icetray1 = 'OK'
     elif 'Missing' in tray1:
-        icetray1 = 'Paper is out. Please add paper.'
+        icetray1 = 'Missing'
     elif 'Low Paper' in tray1:
-        icetray1 = 'Paper is low. Add some paper please.'
+        icetray1 = 'Low'
     if 'OK' in tray2:
-        icetray2 = 'Paper Levels are OK!'
+        icetray2 = 'OK'
     elif 'Missing' in tray2:
-        icetray2 = 'Paper is out. Please add paper.'
+        icetray2 = 'Missing'
     elif 'Low Paper' in tray2:
-        icetray2 = 'Paper is low. Add some paper please.'
-    tray_status = '{0}\n {1}'.format(icetray1, icetray2)
-    return {'bl':black, 'ts':tray_status}
+        icetray2 = 'Low'
+    return {'bl':black, 'i1':icetray1, 'i2':icetray2}
