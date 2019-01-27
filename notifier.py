@@ -122,7 +122,7 @@ def paper_notfication():
         data = cursor.fetchone()
         data = ''.join(data)
         cartridge_ratio = fuzz.partial_ratio(data, cartridge_list[a]) # Case Sensitive 50% match unless partial ratio
-        if cartridge_ratio == 100:
+        if cartridge_ratio == 100 and cartridge_stats != 'OK':
             slack_message("{0}".format('Add Paper to Tray {0}'.format(a+1)), "bot-tester")
             update_state = "UPDATE COLORPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
             cursor.execute(update_state)
