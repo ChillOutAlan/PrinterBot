@@ -131,8 +131,6 @@ def blackandwhite(bw):
     #Parse data that are stored between <tr>..</tr> of HTML
     tr_elements = doc.xpath('//tr')
 
-    #print([len(T) for T in tr_elements[:12]])
-
     #Create empty list
     col=[]
     i=0

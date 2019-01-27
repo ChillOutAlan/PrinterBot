@@ -36,8 +36,8 @@ def catridge_notification():
         cursor.execute(query_statement)
         data = cursor.fetchone()
         data = ''.join(data)
-        cartridge_ratio = fuzz.ratio(data, cartridge_list[a]) # Ratio higher than 90% is safe to push message and update database
-        if cartridge_ratio < 90 and cartridge_stats[a] != 'OK': #do not push message
+        cartridge_ratio = fuzz.partial_ratio(data, cartridge_list[a]) # Ratio higher than 90% is safe to push message and update database
+        if cartridge_ratio == 100 and cartridge_stats[a] != 'OK': #do not push message
             slack_message("{0}".format("{0} cartridge needs to be replaced".format(cartridge[a])), "bot-tester")
             update_state = "UPDATE COLORPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
             cursor.execute(update_state)
@@ -79,8 +79,8 @@ def drum_notification():
         cursor.execute(query_statement)
         data = cursor.fetchone()
         data = ''.join(data)
-        cartridge_ratio = fuzz.ratio(data, cartridge_list[a]) # Case Sensitive 50% match unless partial ratio
-        if cartridge_ratio < 90 and cartridge_stats[a] != 'OK':
+        cartridge_ratio = fuzz.partial_ratio(data, cartridge_list[a]) # Case Sensitive 50% match unless partial ratio
+        if cartridge_ratio == 100 and cartridge_stats[a] != 'OK':
             slack_message("{0}".format("{0} drum needs to be replaced".format(cartridge[a])), "bot-tester")
             update_state = "UPDATE COLORPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
             cursor.execute(update_state)
@@ -122,7 +122,7 @@ def paper_notfication():
         data = cursor.fetchone()
         data = ''.join(data)
         cartridge_ratio = fuzz.partial_ratio(data, cartridge_list[a]) # Case Sensitive 50% match unless partial ratio
-        if cartridge_ratio < 90:
+        if cartridge_ratio == 100:
             slack_message("{0}".format('Add Paper to Tray {0}'.format(a+1)), "bot-tester")
             update_state = "UPDATE COLORPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
             cursor.execute(update_state)
