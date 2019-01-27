@@ -37,8 +37,8 @@ def catridge_notification():
         cursor.execute(query_statement)
         data = cursor.fetchone()
         data = ''.join(data)
-        cartridge_ratio = fuzz.partial_ratio(data, cartridge_list[a]) # Ratio higher than 90% is safe to push message and update database
-        if cartridge_ratio == 100 and cartridge_stats[a] != 'OK': #do not push message
+        cartridge_ratio = fuzz.ratio(data, cartridge_list[a]) # Ratio higher than 90% is safe to push message and update database
+        if cartridge_ratio < 90 and cartridge_stats[a] != 'OK': #do not push message
             slack_message("{0}".format("{0} cartridge needs to be replaced".format(cartridge[a])), "bot-tester")
             update_state = "UPDATE COLORPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
             cursor.execute(update_state)
@@ -80,8 +80,8 @@ def drum_notification():
         cursor.execute(query_statement)
         data = cursor.fetchone()
         data = ''.join(data)
-        cartridge_ratio = fuzz.partial_ratio(data, cartridge_list[a]) # Case Sensitive 50% match unless partial ratio
-        if cartridge_ratio == 100 and cartridge_stats[a] != 'OK':
+        cartridge_ratio = fuzz.ratio(data, cartridge_list[a]) # Case Sensitive 50% match unless partial ratio
+        if cartridge_ratio < 90 and cartridge_stats[a] != 'OK':
             slack_message("{0}".format("{0} drum needs to be replaced".format(cartridge[a])), "bot-tester")
             update_state = "UPDATE COLORPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
             cursor.execute(update_state)
@@ -122,9 +122,9 @@ def paper_notfication():
         cursor.execute(query_statement)
         data = cursor.fetchone()
         data = ''.join(data)
-        cartridge_ratio = fuzz.partial_ratio(data, cartridge_list[a]) # Case Sensitive 50% match unless partial ratio
-        if cartridge_ratio == 100 and cartridge_stats != 'OK':
-            slack_message("{0}".format('Add Paper to Tray {0}'.format(a+1)), "bot-tester")
+        cartridge_ratio = fuzz.ratio(data, cartridge_list[a]) # Case Sensitive 50% match unless partial ratio
+        if cartridge_ratio < 90 and cartridge_stats != 'OK':
+            slack_message("{0}".format('For the Color Printer Add Paper to Tray {0}'.format(a+1)), "bot-tester")
             update_state = "UPDATE COLORPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
             cursor.execute(update_state)
             # Time update
@@ -156,11 +156,11 @@ def paper_notfication():
 # Tray Status and ink status for black and white printer
 def bw_notfication(): #threshold is 0% for ink and missing for paper
     cartridge_list = [scrapemodnot.blackandwhite(bw)['i1'],scrapemodnot.blackandwhite(bw)['i2']]
-    cartridge_names = ["`TRAY STATUS 1`", "`TRAY STATUS 2`"]
+    cartridge_names = ["`TRAY 1 STATUS`", "`TRAY 2 STATUS`"]
     #COLOR PRINTER Catridge Notifier
     # If Cartridge != DB Row don't push
     bwlevel = scrapemodnot.blackandwhite(bw)['black']
-    percentage_ink = int(re.search(r'\d+', bwlevel.group()))
+    percentage_ink = int(re.search(r'\d+', bwlevel).group())
     query1_statement = "select `DATE TIME` from BWPRINTER LIMIT 1;"
     cursor.execute(query1_statement)
     newtime = cursor.fetchone()
@@ -183,9 +183,9 @@ def bw_notfication(): #threshold is 0% for ink and missing for paper
         cursor.execute(query_statement)
         data = cursor.fetchone()
         data = ''.join(data)
-        cartridge_ratio = fuzz.partial_ratio(data, cartridge_list[a]) # Case Sensitive 50% match unless partial ratio
-        if cartridge_ratio == 100 and cartridge_stats != 'OK':
-            slack_message("{0}".format('Add Paper to Tray {0}'.format(a+1)), "bot-tester")
+        cartridge_ratio = fuzz.ratio(data, cartridge_list[a]) # Case Sensitive 50% match unless partial ratio
+        if cartridge_ratio < 90 and cartridge_list != 'OK':
+            slack_message("{0}".format('For Black and White Printer Add Paper to Tray {0}'.format(a+1)), "bot-tester")
             update_state = "UPDATE BWPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
             cursor.execute(update_state)
             # Time update
