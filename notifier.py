@@ -27,6 +27,7 @@ def slack_message(message, channel):
 def catridge_notification():
     cartridge_list = [scrapemodnot.printer_stats(color)['yellow'],scrapemodnot.printer_stats(color)['cyan'],scrapemodnot.printer_stats(color)['black'], scrapemodnot.printer_stats(color)['magenta']]
     cartridge_names = ["`yellow status`", "`cyan status`", "`black status`", "`magenta status`"]
+    cartridge = ["yellow", "cyan", "black", "magenta"]
     cartridge_stats = [scrapemodnot.printer_stats(color)['yellowst'],scrapemodnot.printer_stats(color)['cyanst'],scrapemodnot.printer_stats(color)['blackst'], scrapemodnot.printer_stats(color)['magentast']]
     #COLOR PRINTER Catridge Notifier
     # If Cartridge != DB Row don't push
@@ -36,8 +37,8 @@ def catridge_notification():
         data = cursor.fetchone()
         data = ''.join(data)
         cartridge_ratio = fuzz.ratio(data, cartridge_list[a]) # Ratio higher than 90% is safe to push message and update database
-        if cartridge_ratio < 90: #do not push message
-            slack_message("{0}".format(cartridge_stats[a]), "bot-tester")
+        if cartridge_ratio < 90 and cartridge_stats[a] != 'OK': #do not push message
+            slack_message("{0}".format("{0} cartridge needs to be replaced".format(cartridge[a])), "bot-tester")
             update_state = "UPDATE COLORPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
             cursor.execute(update_state)
             # Time update
@@ -45,7 +46,7 @@ def catridge_notification():
             time_statement = "UPDATE COLORPRINTER SET `DATE TIME` = '{0}'".format(dt)
             cursor.execute(time_statement)
             mariadb_connection.commit()
-            print("Pushed Message and Updated Database")
+            print("Pushed Message and Updated Database (Cartridges)")
         else:
             #Push Notification if x > 1 hour and no changes
             query1_statement = "select `DATE TIME` from COLORPRINTER LIMIT 1;"
@@ -69,6 +70,7 @@ def catridge_notification():
 def drum_notification():
     cartridge_list = [scrapemodnot.printer_stats(color)['yellowdrum'],scrapemodnot.printer_stats(color)['cyandrum'],scrapemodnot.printer_stats(color)['blackdrum'], scrapemodnot.printer_stats(color)['magdrum'], scrapemodnot.printer_stats(color)['waste']]
     cartridge_names = ["`yellow drum status`", "`cyan drum status`", "`black drum status`", "`magenta drum status`", "`wastebox status`"]
+    cartridge = ["yellow", "cyan", "black", "magenta", "waste box"]
     cartridge_stats = [scrapemodnot.printer_stats(color)['yellowdrumst'],scrapemodnot.printer_stats(color)['cyandrumst'],scrapemodnot.printer_stats(color)['blackdrumst'], scrapemodnot.printer_stats(color)['magdrumst'], scrapemodnot.printer_stats(color)['waste']]
     #COLOR PRINTER Catridge Notifier
     # If Cartridge != DB Row don't push
@@ -78,8 +80,8 @@ def drum_notification():
         data = cursor.fetchone()
         data = ''.join(data)
         cartridge_ratio = fuzz.ratio(data, cartridge_list[a]) # Case Sensitive 50% match unless partial ratio
-        if cartridge_ratio < 90:
-            slack_message("{0}".format(cartridge_stats[a]), "bot-tester")
+        if cartridge_ratio < 90 and cartridge_stats[a] != 'OK':
+            slack_message("{0}".format("{0} drum needs to be replaced".format(cartridge[a])), "bot-tester")
             update_state = "UPDATE COLORPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
             cursor.execute(update_state)
             # Time update
@@ -87,7 +89,7 @@ def drum_notification():
             time_statement = "UPDATE COLORPRINTER SET `DATE TIME` = '{0}'".format(dt)
             cursor.execute(time_statement)
             mariadb_connection.commit()
-            print("Pushed Message and Updated Database")
+            print("Pushed Message and Updated Database (Drums Status)")
         else:
             #Push Notification if x > 1 hour and no changes
             query1_statement = "select `DATE TIME` from COLORPRINTER LIMIT 1;"
@@ -119,9 +121,9 @@ def paper_notfication():
         cursor.execute(query_statement)
         data = cursor.fetchone()
         data = ''.join(data)
-        cartridge_ratio = fuzz.ratio(data, cartridge_list[a]) # Case Sensitive 50% match unless partial ratio
+        cartridge_ratio = fuzz.partial_ratio(data, cartridge_list[a]) # Case Sensitive 50% match unless partial ratio
         if cartridge_ratio < 90:
-            slack_message("{0}".format(cartridge_stats[a]), "bot-tester")
+            slack_message("{0}".format('Add Paper to Tray {0}'.format(a+1)), "bot-tester")
             update_state = "UPDATE COLORPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
             cursor.execute(update_state)
             # Time update
@@ -129,7 +131,7 @@ def paper_notfication():
             time_statement = "UPDATE COLORPRINTER SET `DATE TIME` = '{0}'".format(dt)
             cursor.execute(time_statement)
             mariadb_connection.commit()
-            print("Pushed Message and Updated Database")
+            print("Pushed Message and Updated Database (Paper Status)")
         else:
             #Push Notification if x > 1 hour and no changes
             query1_statement = "select `DATE TIME` from COLORPRINTER LIMIT 1;"
@@ -140,15 +142,15 @@ def paper_notfication():
             date_new = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
             date_new = datetime.strptime(date_new, "%Y-%m-%d %H:%M:%S")
             time = date_new - date_old
-            if time.total_seconds() > 18000 and cartridge_list[a] != "OK": # 18000 seconds = 5 hours
-                slack_message("{0}".format(cartridge_stats[a]), "bot-tester")
+            new_ratio = fuzz.partial_ratio(cartridge_list[a], "Add")
+            if time.total_seconds() > 18000 and new_ratio == 100: # 18000 seconds = 5 hours
+                slack_message("{0}".format('Please add Paper to Tray {0}'.format(a+1), "bot-tester"))
                 dt1 = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 time_statement1 = "UPDATE COLORPRINTER SET `DATE TIME` = '{0}'".format(dt1)
                 cursor.execute(time_statement1)
                 mariadb_connection.commit()
                 print("Updated Time in Database!")
     return None
-
 
 if __name__ == '__main__':
     catridge_notification()

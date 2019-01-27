@@ -42,9 +42,6 @@ def printer_stats(address):
     magentast = str2[magentapos:yellowpos]
     yellowst = str2[yellowpos:blackpos]
     blackst = str2[blackpos:355] #335 Position
-    #cartridge_list = '{0}\n{1}\n{2}\n{3}'.format(cyan, magenta, yellow, black)
-
-    #print(cyan,'\n', magenta, '\n', yellow, '\n', black)
 
     if "OK" in cyanst:
         cyan = "OK"
@@ -76,8 +73,7 @@ def printer_stats(address):
     magdrumst = str2[magdrumpos:yellowdrumpos]
     yellowdrumst = str2[yellowdrumpos:blackdrumpos]
     blackdrumst = str2[blackdrumpos:wastedrumpos]
-    wasteboxst = str2[wastedrumpos:495]
-    #drum_list = '{0}\n{1}\n{2}\n{3}\n{4}'.format(cyandrum, magdrum, yellowdrum, blackdrum, wastebox)
+    wasteboxst = str2[wastedrumpos:585] #End when the paper status shows up
 
     if "OK" in cyandrumst:
         cyandrum = "OK"
