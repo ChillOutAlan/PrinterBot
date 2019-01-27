@@ -66,7 +66,6 @@ def catridge_notification():
     return None
 
 # Give status on Drum if there are issues
-#drum_stats = [scrapemodnot.printer_stats(color)['yellowdrumst'],scrapemodnot.printer_stats(color)['cyandrumst'],scrapemodnot.printer_stats(color)['blackdrumst'], scrapemodnot.printer_stats(color)['magdrumst']]
 def drum_notification():
     cartridge_list = [scrapemodnot.printer_stats(color)['yellowdrum'],scrapemodnot.printer_stats(color)['cyandrum'],scrapemodnot.printer_stats(color)['blackdrum'], scrapemodnot.printer_stats(color)['magdrum'], scrapemodnot.printer_stats(color)['waste']]
     cartridge_names = ["`yellow drum status`", "`cyan drum status`", "`black drum status`", "`magenta drum status`", "`wastebox status`"]
