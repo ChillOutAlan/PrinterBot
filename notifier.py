@@ -39,7 +39,7 @@ def catridge_notification():
         data = ''.join(data)
         cartridge_ratio = fuzz.ratio(data, cartridge_list[a]) # Ratio higher than 90% is safe to push message and update database
         if cartridge_ratio < 90 and cartridge_stats[a] != 'OK': #do not push message
-            slack_message("{0}".format("{0} cartridge needs to be replaced".format(cartridge[a])), "bot-tester")
+            slack_message("{0}".format("{0} cartridge needs to be replaced".format(cartridge[a])), "troubleshooter")
             update_state = "UPDATE COLORPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
             cursor.execute(update_state)
             # Time update
@@ -59,7 +59,7 @@ def catridge_notification():
             date_new = datetime.strptime(date_new, "%Y-%m-%d %H:%M:%S")
             time = date_new - date_old
             if time.total_seconds() > 18000 and cartridge_list[a] != "OK": # 18000 seconds = 5 hours
-                slack_message("{0}".format(cartridge_stats[a]), "bot-tester")
+                slack_message("{0}".format(cartridge_stats[a]), "troubleshooter")
                 dt1 = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 time_statement1 = "UPDATE COLORPRINTER SET `DATE TIME` = '{0}'".format(dt1)
                 cursor.execute(time_statement1)
@@ -82,7 +82,7 @@ def drum_notification():
         data = ''.join(data)
         cartridge_ratio = fuzz.ratio(data, cartridge_list[a]) # Case Sensitive 50% match unless partial ratio
         if cartridge_ratio < 90 and cartridge_stats[a] != 'OK':
-            slack_message("{0}".format("{0} drum needs to be replaced".format(cartridge[a])), "bot-tester")
+            slack_message("{0}".format("{0} drum needs to be replaced".format(cartridge[a])), "troubleshooter")
             update_state = "UPDATE COLORPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
             cursor.execute(update_state)
             # Time update
@@ -102,7 +102,7 @@ def drum_notification():
             date_new = datetime.strptime(date_new, "%Y-%m-%d %H:%M:%S")
             time = date_new - date_old
             if time.total_seconds() > 18000 and cartridge_list[a] != "OK": # 18000 seconds = 5 hours
-                slack_message("{0}".format(cartridge_stats[a]), "bot-tester")
+                slack_message("{0}".format(cartridge_stats[a]), "troubleshooter")
                 dt1 = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 time_statement1 = "UPDATE COLORPRINTER SET `DATE TIME` = '{0}'".format(dt1)
                 cursor.execute(time_statement1)
@@ -124,7 +124,7 @@ def paper_notfication():
         data = ''.join(data)
         cartridge_ratio = fuzz.ratio(data, cartridge_list[a]) # Case Sensitive 50% match unless partial ratio
         if cartridge_ratio < 90 and cartridge_stats != 'OK':
-            slack_message("{0}".format('For the Color Printer Add Paper to Tray {0}'.format(a+1)), "bot-tester")
+            slack_message("{0}".format('For the Color Printer Add Paper to Tray {0}'.format(a+1)), "troubleshooter")
             update_state = "UPDATE COLORPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
             cursor.execute(update_state)
             # Time update
@@ -145,7 +145,7 @@ def paper_notfication():
             time = date_new - date_old
             new_ratio = fuzz.partial_ratio(cartridge_list[a], "Add")
             if time.total_seconds() > 18000 and new_ratio == 100: # 18000 seconds = 5 hours
-                slack_message("{0}".format('Please add Paper to Tray {0}'.format(a+1), "bot-tester"))
+                slack_message("{0}".format('Please add Paper to Tray {0}'.format(a+1), "troubleshooter"))
                 dt1 = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 time_statement1 = "UPDATE COLORPRINTER SET `DATE TIME` = '{0}'".format(dt1)
                 cursor.execute(time_statement1)
@@ -172,7 +172,7 @@ def bw_notfication(): #threshold is 0% for ink and missing for paper
     query_update = "UPDATE BWPRINTER SET `INK LEVEL` = {}".format(percentage_ink)
     cursor.execute(query_update)
     if percentage_ink < 0 and time.total_seconds() > 18000:
-        slack_message("Replace the Cartridge", "bot-tester")
+        slack_message("Replace the Cartridge", "troubleshooter")
         update_state = "UPDATE BWPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
         cursor.execute(update_state)
         # Time update
@@ -187,7 +187,7 @@ def bw_notfication(): #threshold is 0% for ink and missing for paper
         data = ''.join(data)
         cartridge_ratio = fuzz.ratio(data, cartridge_list[a]) # Case Sensitive 50% match unless partial ratio
         if cartridge_ratio < 90 and cartridge_list != 'OK':
-            slack_message("{0}".format('For Black and White Printer Add Paper to Tray {0}'.format(a+1)), "bot-tester")
+            slack_message("{0}".format('For Black and White Printer Add Paper to Tray {0}'.format(a+1)), "troubleshooter")
             update_state = "UPDATE BWPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
             cursor.execute(update_state)
             # Time update
@@ -208,7 +208,7 @@ def bw_notfication(): #threshold is 0% for ink and missing for paper
             time = date_new - date_old
             new_ratio = fuzz.partial_ratio(cartridge_list[a], "Missing")
             if time.total_seconds() > 18000 and new_ratio == 100: # 18000 seconds = 5 hours
-                slack_message("{0}".format('Please add Paper to Tray {0}'.format(a+1), "bot-tester"))
+                slack_message("{0}".format('Please add Paper to Tray {0}'.format(a+1), "troubleshooter"))
                 dt1 = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                 time_statement1 = "UPDATE BWPRINTER SET `DATE TIME TRAY` = '{0}'".format(dt1)
                 cursor.execute(time_statement1)
