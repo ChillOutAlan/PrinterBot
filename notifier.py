@@ -171,6 +171,7 @@ def bw_notfication(): #threshold is 0% for ink and missing for paper
     time = date_new - date_old
     query_update = "UPDATE BWPRINTER SET `INK LEVEL` = {}".format(percentage_ink)
     cursor.execute(query_update)
+    mariadb_connection.commit()
     if percentage_ink < 0 and time.total_seconds() > 18000:
         slack_message("Replace the Cartridge", "troubleshooter")
         update_state = "UPDATE BWPRINTER SET {0} = '{1}';".format(cartridge_names[a], cartridge_list[a])
